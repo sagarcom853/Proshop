@@ -11,8 +11,9 @@ import RegisterScreen from './Screens/registerScreen'
 import ProfileScreen from './Screens/ProfileScreen'
 import ShippingScreen from './Screens/ShippingScreen'
 import PaymentMethodScreen from './Screens/PaymentMethodScreen'
-import PlaceOrderScreen from "./Screens/PlaceOrderScreen"
-import OrderScreen from "./Screens/OrderScreen"
+import PlaceOrderScreen from './Screens/PlaceOrderScreen'
+import OrderScreen from './Screens/OrderScreen'
+import UserlistScreen from './Screens/userListScreen'
 import { Container } from 'react-bootstrap'
 
 class App extends React.Component {
@@ -31,6 +32,7 @@ class App extends React.Component {
             <Route path='/order/:id' component={OrderScreen} />
             <Route path='/product/:id' component={ProductScreen} />
             <Route path='/cart/:id?' component={CartScreen} />
+            <Route path='/admin/userlist/' component={UserlistScreen} />
             <Route exact path='/' component={HomeScreen} />
           </Container>
 

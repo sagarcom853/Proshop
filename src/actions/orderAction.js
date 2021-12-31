@@ -13,6 +13,13 @@ import {
   ORDER_PAY_SUCCESS_CASH,
   ORDER_PAY_FAIL_CASH,
   ORDER_PAY_RESET_CASH,
+  ORDER_PAY_REQUEST_Gpay,
+  ORDER_PAY_SUCCESS_Gpay,
+  ORDER_PAY_RESET_Gpay,
+  ORDER_PAY_FAIL_Gpay,
+  ORDER_LIST_MY_FAIL,
+  ORDER_LIST_MY_SUCCESS,
+  ORDER_LIST_MY_REQUEST,
 } from '../contants/orderConstants'
 import axios from 'axios'
 
@@ -98,6 +105,38 @@ export const payOrder =
     }
   }
 
+export const payOrderByGpay =
+  (orderId, paymentResult) => async (dispatch, getState) => {
+    try {
+      dispatch({ type: ORDER_PAY_REQUEST_Gpay })
+      const {
+        userLogin: { userInfo },
+      } = getState()
+      console.log('1')
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      }
+      const { data } = await axios.put(
+        `/api/orders/${orderId}/Gpay`,
+        paymentResult,
+        config
+      )
+      dispatch({ type: ORDER_DETAILS_SUCCESS, payload: data })
+      dispatch({ type: ORDER_PAY_SUCCESS_Gpay, payload: data })
+    } catch (error) {
+      dispatch({
+        type: ORDER_PAY_FAIL_Gpay,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      })
+    }
+  }
+
 export const payOrderByCash =
   (orderId, paymentResult) => async (dispatch, getState) => {
     try {
@@ -129,5 +168,29 @@ export const payOrderByCash =
       })
     }
   }
+export const listMyOrders = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: ORDER_LIST_MY_REQUEST })
+    const {
+      userLogin: { userInfo },
+    } = getState()
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    }
+    const { data } = await axios.get(`/api/orders/myorders`, config)
+
+    dispatch({ type: ORDER_LIST_MY_SUCCESS, payload: data })
+  } catch (error) {
+    dispatch({
+      type: ORDER_LIST_MY_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    })
+  }
+}
 
 //we dont need content type for get requests

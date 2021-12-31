@@ -12,7 +12,14 @@ import {
   ORDER_PAY_REQUEST_CASH,
   ORDER_PAY_SUCCESS_CASH,
   ORDER_PAY_FAIL_CASH,
-  ORDER_PAY_RESET_CASH
+  ORDER_PAY_RESET_CASH,
+  ORDER_PAY_REQUEST_Gpay,
+  ORDER_PAY_SUCCESS_Gpay,
+  ORDER_PAY_RESET_Gpay,
+  ORDER_PAY_FAIL_Gpay,
+  ORDER_LIST_MY_FAIL,
+  ORDER_LIST_MY_SUCCESS,
+  ORDER_LIST_MY_REQUEST
 } from '../contants/orderConstants'
 
 export const orderCreateReducer = (state = {}, action) => {
@@ -80,3 +87,37 @@ export const orderPayReducerByCash = (
   }
 }
 
+export const orderPayReducerByGpay = (
+  state = {},
+  action
+) => {
+  switch (action.type) {
+    case ORDER_PAY_REQUEST_Gpay:
+      return {loading: true }
+    case ORDER_PAY_SUCCESS_Gpay:
+      return { loading: false,success:true,}
+    case ORDER_PAY_FAIL_Gpay:
+      return { loading: false, error: action.payload }
+    case ORDER_PAY_RESET_Gpay:
+      return {}
+    default:
+      return state
+  }
+}
+
+export const orderListMyReducer = (
+  state = {},
+  action
+) => {
+  switch (action.type) {
+    case ORDER_LIST_MY_REQUEST:
+      return {loading: true }
+    case ORDER_LIST_MY_SUCCESS:
+      return { loading: false,orders:action.payload}
+    case ORDER_LIST_MY_FAIL:
+      return { loading: false, error: action.payload }
+   
+    default:
+      return state
+  }
+}

@@ -1,8 +1,9 @@
 import React, { Link } from 'react'
 import { useEffect } from 'react'
+
 import { NavDropdown, LinkContainer } from 'react-router-bootstrap'
 import { useSelector, useDispatch } from 'react-redux'
-import { Navbar, Nav, Container } from 'react-bootstrap'
+import {Dropdown, Navbar, Nav, Container } from 'react-bootstrap'
 import { USER_LOGOUT } from './contants/userConstant'
 import { logout } from './actions/userAction'
 
@@ -19,7 +20,7 @@ const Navbar1 = (props) => {
 
   return (
     <div>
-      <Navbar bg='black' variant='dark' expand='lg' collapseOnSelect>
+      <Navbar bg='dark' variant='dark' expand='lg' collapseOnSelect>
         <Container>
           <Navbar.Brand href='/'>Proshop</Navbar.Brand>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
@@ -32,8 +33,6 @@ const Navbar1 = (props) => {
               {userInfo ? (
                 <>
                   <Nav.Link href='/profile'>{userInfo.name}'s Profile</Nav.Link>
-                  <Nav.Link href='/payment'>PAY</Nav.Link>
-
                   <Nav.Link onClick={logoutHandler}>logout</Nav.Link>
                 </>
               ) : (
@@ -49,6 +48,17 @@ const Navbar1 = (props) => {
                   </Nav.Link>
                 </>
               )}
+              {userInfo && userInfo.isAdmin && 
+            <Dropdown>
+            <Dropdown.Toggle variant="dark" bg='dark' id='adminmenu'>
+              {userInfo.name}
+            </Dropdown.Toggle>     
+            <Dropdown.Menu>
+              <Dropdown.Item href="/admin/userlist">Users</Dropdown.Item>
+              <Dropdown.Item href="/admin/productlist">Products</Dropdown.Item>
+              <Dropdown.Item href="/admin/orderlist">Orders</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>}
             </Nav>
           </Navbar.Collapse>
         </Container>

@@ -9,6 +9,7 @@ import {
   getOrderDetails,
   payOrder,
   payOrderByCash,
+  payOrderByGpay,
 } from '../actions/orderAction'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
@@ -35,6 +36,10 @@ const OrderScreen = ({ match, history }) => {
   const orderPayByCash = useSelector((state) => state.orderPayByCash)
   const { loading: loadingP, success: successP } = orderPayByCash
   console.log(loadingP, successP)
+
+  const orderPayByGpay = useSelector((state) => state.orderPayByGpay)
+  const { loading: loadingPa, success: successPa } = orderPayByGpay
+  console.log(loadingPa, successPa)
 
   const userLogin = useSelector((state) => state.userLogin)
   const { userInfo } = userLogin
@@ -102,20 +107,29 @@ const OrderScreen = ({ match, history }) => {
     console.log(paymentResult)
     dispatch(payOrder(orderId, paymentResult))
   }
+
+  const handlePaymentByGpay = (paymentResult) => {
+    console.log(paymentResult)
+    dispatch(payOrderByGpay(orderId, paymentResult))
+  }
   const handleCashRequest = () => {
+    console.log('order', order)
+
     var today = new Date()
     var date =
       today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
     var time =
       today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds()
     var tim = date + ',' + time
+    console.log('userInfo',userInfo)
     const paymentResult = {
-      id: userInfo._Id,
+      id: orderId,
       status: 'paid',
       update_time: tim,
-      email: order.user.email,
+      email: userInfo.email,
     }
     console.log('Cash')
+    console.log(paymentResult)
     dispatch(payOrderByCash(orderId, paymentResult))
   }
   return loading ? (
@@ -138,13 +152,11 @@ const OrderScreen = ({ match, history }) => {
                     </h3>
                     <p>
                       {' '}
-                      <strong>Name:</strong> {order.user.name}
+                      <strong>Name:</strong> {userInfo.name}
                     </p>
                     <p>
                       <strong>Email Id:</strong>{' '}
-                      <a href={`mailto:${order.user.email}`}>
-                        {order.user.email}{' '}
-                      </a>
+                      <a href={`mailto:${userInfo.email}`}>{userInfo.email} </a>
                     </p>
                     <p>
                       <strong>Address: </strong>
@@ -348,17 +360,16 @@ const OrderScreen = ({ match, history }) => {
                                 'payment Authorized success',
                                 paymentData
                               )
-                              successPaymentHandler(paymentData)
+                              handlePaymentByGpay(paymentData)
+
                               return { transactionState: ' SUCCESS' }
                             }}
                             existingPaymentMethodRequired='false'
                             buttonColor='black'
                             buttonType='pay'
                             buttonSizeMode='static'
-
                           />
                         </ListGroup.Item>
-                    
                       </span>
                     )}
                   </ListGroup.Item>

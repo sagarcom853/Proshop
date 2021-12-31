@@ -1,16 +1,25 @@
 import React from 'react'
-import { ListGroup, Col, Row, Card, Image } from 'react-bootstrap'
+import { ListGroup, Col, Row, Card, Image, Button } from 'react-bootstrap'
 import axios from 'axios'
 import { PayPalButton } from 'react-paypal-button-v2'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { getOrderDetails, payOrder } from '../actions/orderAction'
+import {
+  getOrderDetails,
+  payOrder,
+  payOrderByCash,
+} from '../actions/orderAction'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { ORDER_PAY_RESET } from '../contants/orderConstants'
+import {
+  ORDER_PAY_RESET,
+  ORDER_DELIVER_RESET,
+  ORDER_PAY_RESET_CASH,
+} from '../contants/orderConstants'
+import GooglePayButton from '@google-pay/button-react'
 
-const OrderScreen = ({ match }) => {
+const OrderScreen = ({ match, history }) => {
   const orderId = match.params.id
   const dispatch = useDispatch()
 
@@ -21,11 +30,21 @@ const OrderScreen = ({ match }) => {
 
   const orderPay = useSelector((state) => state.orderPay)
   const { loading: loadingPay, success: successPay } = orderPay
+  console.log(loadingPay, successPay)
+
+  const orderPayByCash = useSelector((state) => state.orderPayByCash)
+  const { loading: loadingP, success: successP } = orderPayByCash
+  console.log(loadingP, successP)
+
+  const userLogin = useSelector((state) => state.userLogin)
+  const { userInfo } = userLogin
+
+  // const orderDeliver = useSelector((state) => state.orderDeliver)
+  // const { loading: loadingDeliver, success: successDeliver } = orderDeliver
 
   useEffect(() => {
     const addPayPalScript = async () => {
       const { data: clientId } = await axios.get('/api/config/paypal')
-      console.log(clientId)
       const script = document.createElement('script')
       script.type = 'text/javascript'
       script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`
@@ -36,16 +55,36 @@ const OrderScreen = ({ match }) => {
       document.body.appendChild(script)
     }
 
-    if (!order || successPay || order._id !== orderId) {
-      dispatch(getOrderDetails(orderId))
-    } else if (!order.isPaid) {
-      if (!window.paypal) {
-        addPayPalScript()
-      } else {
+    const addGoogleScript = async () => {
+      const google = window.google
+      const script = document.createElement('script')
+      script.type = 'text/javascript'
+      script.src = `https://pay.google.com/gp/p/js/pay.js`
+      script.async = true
+      script.onload = () => {
         setSdkReady(true)
       }
+      // const paymentsClient = new google.payments.api.PaymentsClient({
+      //   environment: 'TEST',
+      // })
+
+      document.body.appendChild(script)
     }
-  }, [order, dispatch, orderId, successPay])
+
+    if (!order || successPay || order._id !== orderId) {
+      dispatch({ type: ORDER_PAY_RESET })
+      dispatch({ type: ORDER_PAY_RESET_CASH })
+      // dispatch({ type: ORDER_DELIVER_RESET })
+      dispatch(getOrderDetails(orderId))
+    } else if (!order.isPaid) {
+      if (!window.google) {
+        // addPayPalScript()
+        addGoogleScript()
+      } else {
+        setSdkReady(false)
+      }
+    }
+  }, [dispatch, orderId, order])
 
   if (!loading) {
     order.itemsPrice = order.orderItems.reduce(
@@ -59,8 +98,25 @@ const OrderScreen = ({ match }) => {
   }
 
   const successPaymentHandler = (paymentResult) => {
+    console.log('hielloe')
     console.log(paymentResult)
     dispatch(payOrder(orderId, paymentResult))
+  }
+  const handleCashRequest = () => {
+    var today = new Date()
+    var date =
+      today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
+    var time =
+      today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds()
+    var tim = date + ',' + time
+    const paymentResult = {
+      id: userInfo._Id,
+      status: 'paid',
+      update_time: tim,
+      email: order.user.email,
+    }
+    console.log('Cash')
+    dispatch(payOrderByCash(orderId, paymentResult))
   }
   return loading ? (
     <Loader />
@@ -68,7 +124,7 @@ const OrderScreen = ({ match }) => {
     <Message variant='danger'>{error}</Message>
   ) : (
     <>
-      <h1>Order {order._id}</h1>
+      <h1 className='py-3'>Order {order._id}</h1>
       <div>
         {error && <Message variant='danger'>{error}</Message>}
         <Row>
@@ -219,10 +275,91 @@ const OrderScreen = ({ match }) => {
                     {!sdkReady ? (
                       <Loader />
                     ) : (
-                      <PayPalButton
-                        amount={order.totalPrice}
-                        onSucess={successPaymentHandler}
-                      ></PayPalButton>
+                      <span>
+                        {/* <PayPalButton
+                          amount={order.totalPrice}
+                          intent='order'
+                          onSucess={successPaymentHandler}
+                        ></PayPalButton> */}
+                        <ListGroup.Item>
+                          <Button
+                            type='submit'
+                            type='button'
+                            variant='primary'
+                            className='py-2'
+                            onClick={handleCashRequest}
+                          >
+                            Pay by cash <span>&#8377;</span>&nbsp;
+                            {order.totalPrice}
+                          </Button>
+                        </ListGroup.Item>
+                        <ListGroup.Item>
+                          <GooglePayButton
+                            environment='TEST'
+                            paymentRequest={{
+                              apiVersion: 2,
+                              apiVersionMinor: 0,
+                              allowedPaymentMethods: [
+                                {
+                                  type: 'CARD',
+                                  parameters: {
+                                    allowedAuthMethods: [
+                                      'PAN_ONLY',
+                                      'CRYPTOGRAM_3DS',
+                                    ],
+                                    allowedCardNetworks: ['MASTERCARD', 'VISA'],
+                                  },
+                                  tokenizationSpecification: {
+                                    type: 'PAYMENT_GATEWAY',
+                                    parameters: {
+                                      gateway: 'example',
+                                      gatewayMerchantId:
+                                        'exampleGatewayMerchantId',
+                                    },
+                                  },
+                                },
+                              ],
+                              merchantInfo: {
+                                merchantId: '12345678901234567890',
+                                merchantName: 'Demo Merchant',
+                              },
+                              transactionInfo: {
+                                totalPriceStatus: 'FINAL',
+                                totalPriceLabel: 'Total',
+                                totalPrice: String(order.totalPrice),
+                                currencyCode: 'INR',
+                                countryCode: 'IN',
+                              },
+                              shippingAddressRequired: true,
+                              callbackIntents: ['PAYMENT_AUTHORIZATION'],
+                            }}
+                            onLoadPaymentData={(paymentRequest) => {
+                              console.log('success', paymentRequest)
+                            }}
+                            onPaymentDataChange={(paymentData) => {
+                              console.log(
+                                'on payment data changed',
+                                paymentData
+                              )
+                              return {}
+                            }}
+                            onPaymentAuthorized={(paymentData) => {
+                              console.log(
+                                'payment Authorized success',
+                                paymentData
+                              )
+                              successPaymentHandler(paymentData)
+                              return { transactionState: ' SUCCESS' }
+                            }}
+                            existingPaymentMethodRequired='false'
+                            buttonColor='black'
+                            buttonType='pay'
+                            buttonSizeMode='static'
+
+                          />
+                        </ListGroup.Item>
+                    
+                      </span>
                     )}
                   </ListGroup.Item>
                 )}

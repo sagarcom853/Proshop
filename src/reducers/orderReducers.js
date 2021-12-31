@@ -8,7 +8,11 @@ import {
   ORDER_PAY_REQUEST,
   ORDER_PAY_SUCCESS,
   ORDER_PAY_FAIL,
-  ORDER_PAY_RESET
+  ORDER_PAY_RESET,
+  ORDER_PAY_REQUEST_CASH,
+  ORDER_PAY_SUCCESS_CASH,
+  ORDER_PAY_FAIL_CASH,
+  ORDER_PAY_RESET_CASH
 } from '../contants/orderConstants'
 
 export const orderCreateReducer = (state = {}, action) => {
@@ -16,7 +20,6 @@ export const orderCreateReducer = (state = {}, action) => {
     case CREATE_ORDER_REQUEST:
       return { loading: true }
     case CREATE_ORDER_SUCCESS:
-      console.log('inside order Reducer')
       return { loading: false, success: true, order: action.payload }
     case CREATE_ORDER_FAIL:
       return { loading: false, error: action.payload }
@@ -58,3 +61,22 @@ export const orderPayReducer = (
       return state
   }
 }
+
+export const orderPayReducerByCash = (
+  state = {},
+  action
+) => {
+  switch (action.type) {
+    case ORDER_PAY_REQUEST_CASH:
+      return {loading: true }
+    case ORDER_PAY_SUCCESS_CASH:
+      return { loading: false,success:true,}
+    case ORDER_PAY_FAIL_CASH:
+      return { loading: false, error: action.payload }
+    case ORDER_PAY_RESET_CASH:
+      return {}
+    default:
+      return state
+  }
+}
+

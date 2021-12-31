@@ -12,7 +12,7 @@ const PaymentMethodScreen = ({ history }) => {
   if (!shippingAddress) {
     history.push('/shipping')
   }
-  const [paymentMethod, setPaymentMethod] = useState('PayPal')
+  const [paymentMethod, setPaymentMethod] = useState('GooglePay')
   const dispatch = useDispatch()
 
   const submitHandler = (e) => {
@@ -36,14 +36,22 @@ const PaymentMethodScreen = ({ history }) => {
             <Col>
               <Form.Check
                 type='radio'
-                label='PayPal or Credit Card'
+                label='PayPal'
                 id='PayPal'
                 name='paymentMethod'
                 value='PayPal'
-                checked
                 onChange={(e) => setPaymentMethod(e.target.value)}
               ></Form.Check>
-            </Col>
+           
+            <Form.Check
+              type='radio'
+              label='Google Pay'
+              id='GooglePay'
+              name='paymentMethod'
+              value='GooglePay'
+              checked
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            ></Form.Check>
 
             <Form.Check
               type='radio'
@@ -53,6 +61,7 @@ const PaymentMethodScreen = ({ history }) => {
               value='Cash'
               onChange={(e) => setPaymentMethod(e.target.value)}
             ></Form.Check>
+             </Col>
           </Form.Group>
 
           <br />

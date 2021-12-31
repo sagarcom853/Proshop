@@ -9,6 +9,10 @@ import {
   ORDER_PAY_SUCCESS,
   ORDER_PAY_FAIL,
   ORDER_PAY_RESET,
+  ORDER_PAY_REQUEST_CASH,
+  ORDER_PAY_SUCCESS_CASH,
+  ORDER_PAY_FAIL_CASH,
+  ORDER_PAY_RESET_CASH,
 } from '../contants/orderConstants'
 import axios from 'axios'
 
@@ -49,7 +53,6 @@ export const getOrderDetails = (orderId) => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     }
-
     const { data } = await axios.get(`/api/orders/${orderId}`, config)
     dispatch({ type: ORDER_DETAILS_SUCCESS, payload: data })
   } catch (error) {
@@ -70,20 +73,55 @@ export const payOrder =
       const {
         userLogin: { userInfo },
       } = getState()
+      console.log('1')
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${userInfo.token}`,
         },
       }
-
-      const { data } = await axios.put(`/api/orders/${orderId}/pay`,paymentResult,config)
-      console.log(data)
-
+      const { data } = await axios.put(
+        `/api/orders/${orderId}/pay`,
+        paymentResult,
+        config
+      )
+      dispatch({ type: ORDER_DETAILS_SUCCESS, payload: data })
       dispatch({ type: ORDER_PAY_SUCCESS, payload: data })
     } catch (error) {
       dispatch({
         type: ORDER_PAY_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      })
+    }
+  }
+
+export const payOrderByCash =
+  (orderId, paymentResult) => async (dispatch, getState) => {
+    try {
+      // dispatch({ ORDER_PAY_RESET_CASH })
+      dispatch({ type: ORDER_PAY_REQUEST_CASH })
+      const {
+        userLogin: { userInfo },
+      } = getState()
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      }
+      const { data } = await axios.put(
+        `/api/orders/${orderId}/cash`,
+        paymentResult,
+        config
+      )
+      dispatch({ type: ORDER_DETAILS_SUCCESS, payload: data })
+      dispatch({ type: ORDER_PAY_SUCCESS_CASH, payload: data })
+    } catch (error) {
+      dispatch({
+        type: ORDER_PAY_FAIL_CASH,
         payload:
           error.response && error.response.data.message
             ? error.response.data.message

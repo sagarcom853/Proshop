@@ -8,15 +8,15 @@ import { login } from '../actions/userAction'
 import FormComponent from '../components/formComponent'
 
 const LoginScreen = ({ location, history }) => {
-  console.log(location, history)
+  // console.log(location, history)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   const dispatch = useDispatch()
   const userLogin = useSelector((state) => state.userLogin)
-  console.log(userLogin)
+  // console.log(userLogin)
   const { loading, error, userInfo } = userLogin
-  console.log(loading, error, userInfo)
+  // console.log(loading, error, userInfo)
 
   const submitHandler = (e) => {
     e.preventDefault()

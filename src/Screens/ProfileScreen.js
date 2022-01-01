@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { Form, Button, Row, Col, Table } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
-import FormComponent from '../components/formComponent'
-import { register } from '../actions/userAction'
+// import FormComponent from '../components/formComponent'
+// import { register } from '../actions/userAction'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import { getUserDetails, UserUpdateProfile } from '../actions/userAction'
@@ -34,7 +34,7 @@ const ProfileScreen = ({ history }) => {
     error: errorOrders,
     orders: orderP,
   } = orderMyList
-  console.log(orderP)
+  // console.log(orderP)
 
   useEffect(() => {
     if (!userInfo) {

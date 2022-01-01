@@ -23,10 +23,11 @@ const CartScreen = ({ match, location, history }) => {
     history.push(`/login?redirect=shipping`)
   }
   useEffect(() => {
-    if (productId) {
+
+if (productId) {
       dispatch(addToCart(productId, qty))
     }
-  }, [dispatch, productId, qty])
+  }, [dispatch, productId, qty,history])
   // console.log(qty)
 
   return (

@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 import axios from 'axios'
 import {
   CART_ADD_ITEM,
@@ -8,9 +8,9 @@ import {
 } from '../contants/CartConstants'
 
 export const addToCart = (id, qty) => async (dispatch, getState) => {
-  console.log('inside add to cart actionj')
+  // console.log('inside add to cart actionj')
   const { data } = await axios.get(`/api/products/${id}`)
-  console.log(data)
+  // console.log(data)
 
   dispatch({
     type: CART_ADD_ITEM,
@@ -39,6 +39,7 @@ export const removeFromCart = (id) => async (dispatch, getState) => {
   })
   localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems))
 }
+
 
 export const saveShippingAddress = (formData) => async (dispatch) => {
   dispatch({

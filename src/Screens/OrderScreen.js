@@ -1,13 +1,13 @@
 import React from 'react'
 import { ListGroup, Col, Row, Card, Image, Button } from 'react-bootstrap'
-import axios from 'axios'
-import { PayPalButton } from 'react-paypal-button-v2'
+// import axios from 'axios'
+// import { PayPalButton } from 'react-paypal-button-v2'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   getOrderDetails,
-  payOrder,
+  // payOrder,
   payOrderByCash,
   payOrderByGpay,
 } from '../actions/orderAction'
@@ -15,7 +15,7 @@ import Message from '../components/Message'
 import Loader from '../components/Loader'
 import {
   ORDER_PAY_RESET,
-  ORDER_DELIVER_RESET,
+  // ORDER_DELIVER_RESET,
   ORDER_PAY_RESET_CASH,
 } from '../contants/orderConstants'
 import GooglePayButton from '@google-pay/button-react'
@@ -31,15 +31,15 @@ const OrderScreen = ({ match, history }) => {
 
   const orderPay = useSelector((state) => state.orderPay)
   const { loading: loadingPay, success: successPay } = orderPay
-  console.log(loadingPay, successPay)
+  // console.log(loadingPay, successPay)
 
-  const orderPayByCash = useSelector((state) => state.orderPayByCash)
-  const { loading: loadingP, success: successP } = orderPayByCash
-  console.log(loadingP, successP)
+  // const orderPayByCash = useSelector((state) => state.orderPayByCash)
+  // const { loading: loadingP, success: successP } = orderPayByCash
+  // console.log(loadingP, successP)
 
-  const orderPayByGpay = useSelector((state) => state.orderPayByGpay)
-  const { loading: loadingPa, success: successPa } = orderPayByGpay
-  console.log(loadingPa, successPa)
+  // const orderPayByGpay = useSelector((state) => state.orderPayByGpay)
+  // const { loading: loadingPa, success: successPa } = orderPayByGpay
+  // console.log(loadingPa, successPa)
 
   const userLogin = useSelector((state) => state.userLogin)
   const { userInfo } = userLogin
@@ -48,20 +48,20 @@ const OrderScreen = ({ match, history }) => {
   // const { loading: loadingDeliver, success: successDeliver } = orderDeliver
 
   useEffect(() => {
-    const addPayPalScript = async () => {
-      const { data: clientId } = await axios.get('/api/config/paypal')
-      const script = document.createElement('script')
-      script.type = 'text/javascript'
-      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`
-      script.async = true
-      script.onload = () => {
-        setSdkReady(true)
-      }
-      document.body.appendChild(script)
-    }
+    // const addPayPalScript = async () => {
+    //   const { data: clientId } = await axios.get('/api/config/paypal')
+    //   const script = document.createElement('script')
+    //   script.type = 'text/javascript'
+    //   script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`
+    //   script.async = true
+    //   script.onload = () => {
+    //     setSdkReady(true)
+    //   }
+    //   document.body.appendChild(script)
+    // }
 
     const addGoogleScript = async () => {
-      const google = window.google
+      // const google = window.google
       const script = document.createElement('script')
       script.type = 'text/javascript'
       script.src = `https://pay.google.com/gp/p/js/pay.js`
@@ -89,7 +89,7 @@ const OrderScreen = ({ match, history }) => {
         setSdkReady(false)
       }
     }
-  }, [dispatch, orderId, order])
+  }, [dispatch, orderId, order, successPay])
 
   if (!loading) {
     order.itemsPrice = order.orderItems.reduce(
@@ -102,18 +102,18 @@ const OrderScreen = ({ match, history }) => {
     )
   }
 
-  const successPaymentHandler = (paymentResult) => {
-    console.log('hielloe')
-    console.log(paymentResult)
-    dispatch(payOrder(orderId, paymentResult))
-  }
+  // const successPaymentHandler = (paymentResult) => {
+  //   // console.log('hielloe')
+  //   // console.log(paymentResult)
+  //   dispatch(payOrder(orderId, paymentResult))
+  // }
 
   const handlePaymentByGpay = (paymentResult) => {
-    console.log(paymentResult)
+    // console.log(paymentResult)
     dispatch(payOrderByGpay(orderId, paymentResult))
   }
   const handleCashRequest = () => {
-    console.log('order', order)
+    // console.log('order', order)
 
     var today = new Date()
     var date =
@@ -121,15 +121,15 @@ const OrderScreen = ({ match, history }) => {
     var time =
       today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds()
     var tim = date + ',' + time
-    console.log('userInfo',userInfo)
+    // console.log('userInfo',userInfo)
     const paymentResult = {
       id: orderId,
       status: 'paid',
       update_time: tim,
       email: userInfo.email,
     }
-    console.log('Cash')
-    console.log(paymentResult)
+    // console.log('Cash')
+    // console.log(paymentResult)
     dispatch(payOrderByCash(orderId, paymentResult))
   }
   return loading ? (
@@ -295,7 +295,6 @@ const OrderScreen = ({ match, history }) => {
                         ></PayPalButton> */}
                         <ListGroup.Item>
                           <Button
-                            type='submit'
                             type='button'
                             variant='primary'
                             className='py-2'
@@ -346,20 +345,20 @@ const OrderScreen = ({ match, history }) => {
                               callbackIntents: ['PAYMENT_AUTHORIZATION'],
                             }}
                             onLoadPaymentData={(paymentRequest) => {
-                              console.log('success', paymentRequest)
+                              // console.log('success', paymentRequest)
                             }}
                             onPaymentDataChange={(paymentData) => {
-                              console.log(
-                                'on payment data changed',
-                                paymentData
-                              )
+                              // console.log(
+                              //   'on payment data changed',
+                              //   paymentData
+                              // )
                               return {}
                             }}
                             onPaymentAuthorized={(paymentData) => {
-                              console.log(
-                                'payment Authorized success',
-                                paymentData
-                              )
+                              // console.log(
+                              //   'payment Authorized success',
+                              //   paymentData
+                              // )
                               handlePaymentByGpay(paymentData)
 
                               return { transactionState: ' SUCCESS' }
@@ -368,6 +367,7 @@ const OrderScreen = ({ match, history }) => {
                             buttonColor='black'
                             buttonType='pay'
                             buttonSizeMode='static'
+
                           />
                         </ListGroup.Item>
                       </span>

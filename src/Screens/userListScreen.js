@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Table, Button, Row, Col } from 'react-bootstrap'
+import { Table, Button } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
@@ -16,7 +16,7 @@ const UserListScreen = ({ history }) => {
 
   const userLogin = useSelector((state) => state.userLogin)
   const { userInfo } = userLogin
-  
+
   const deleteHandler = (id) => {
     if (window.confirm('Are you sure?')) {
       dispatch(deleteUser(id))
@@ -28,12 +28,12 @@ const UserListScreen = ({ history }) => {
     } else {
       history.push('/login')
     }
-  }, [successDelete, dispatch, history])
-  console.log(users)
+  }, [successDelete, dispatch, history,userInfo])
+//   console.log(users)
   return (
     <div>
       <>
-        <h1>Users</h1>
+        <h1 className='text-center py-3'>Users</h1>
         {loading ? (
           <Loader />
         ) : error ? (
@@ -73,8 +73,8 @@ const UserListScreen = ({ history }) => {
                       )}
                     </td>
                     <td>
-                      <LinkContainer to={`/user/${user._id}/edit`}>
-                        <Button variant='light' className='btn-sm'>
+                      <LinkContainer to={`/admin/user/${user._id}/edit`}>
+                        <Button variant='info' className='btn-sm'>
                           <i className='fas fa-edit'></i>
                         </Button>
                       </LinkContainer>

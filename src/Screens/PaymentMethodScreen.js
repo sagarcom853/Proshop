@@ -8,7 +8,7 @@ import FormComponent from '../components/formComponent'
 
 const PaymentMethodScreen = ({ history }) => {
   const cart = useSelector((state) => state.cart)
-  const { payMethod, shippingAddress } = cart
+  const {shippingAddress } = cart
   if (!shippingAddress) {
     history.push('/shipping')
   }
@@ -17,7 +17,7 @@ const PaymentMethodScreen = ({ history }) => {
 
   const submitHandler = (e) => {
     e.preventDefault()
-    console.log('submit')
+    // console.log('submit')
     // dispatch save card
     dispatch(savePaymentDetails(paymentMethod))
     history.push('/placeorder')

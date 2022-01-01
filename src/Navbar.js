@@ -1,18 +1,20 @@
-import React, { Link } from 'react'
-import { useEffect } from 'react'
+import React from 'react'
+// import { useEffect } from 'react'
 
-import { NavDropdown, LinkContainer } from 'react-router-bootstrap'
+// import { NavDropdown, LinkContainer } from 'react-router-bootstrap'
+import { Redirect } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import {Dropdown, Navbar, Nav, Container } from 'react-bootstrap'
-import { USER_LOGOUT } from './contants/userConstant'
+import { Dropdown, Navbar, Nav, Container } from 'react-bootstrap'
+// import { USER_LOGOUT } from './contants/userConstant'
 import { logout } from './actions/userAction'
 
-const Navbar1 = (props) => {
+const Navbar1 = ({ history }) => {
+  console.log(history)
   const dispatch = useDispatch()
   const userLogin = useSelector((state) => state.userLogin)
   const { userInfo } = userLogin
+  // const user = useSelector((state) => state.userDetails.user)
 
-  const user = useSelector((state) => state.userDetails.user)
 
   const logoutHandler = () => {
     dispatch(logout())
@@ -26,39 +28,50 @@ const Navbar1 = (props) => {
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
             <Nav className='ml-auto'>
-              <Nav.Link href='/cart'>
+              {/* <Nav.Link href='/cart'>
                 {' '}
                 <i className='fas fa-shopping-cart'></i>Cart
-              </Nav.Link>
+              </Nav.Link> */}
               {userInfo ? (
-                <>
-                  <Nav.Link href='/profile'>{userInfo.name}'s Profile</Nav.Link>
-                  <Nav.Link onClick={logoutHandler}>logout</Nav.Link>
-                </>
+                <Dropdown>
+                  <Dropdown.Toggle variant='dark' bg='dark' id='adminmenu'>
+                    {userInfo.name}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item href='/profile'>Profile</Dropdown.Item>
+                    <Dropdown.Item onClick={logoutHandler}>
+                      logout
+                    </Dropdown.Item>
+                    <Dropdown.Item href='/cart'>
+                      <i className='fas fa-shopping-cart'></i>&nbsp;Cart
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
               ) : (
                 <>
                   <Nav.Link href='/login'>
                     {' '}
-                    <i className='fas fa-user'></i> Sign In
-                  </Nav.Link>
-
-                  <Nav.Link href='/register'>
-                    {' '}
-                    <i className='fas fa-user'></i> Register
+                    <i className='fas fa-user'></i> Login
                   </Nav.Link>
                 </>
               )}
-              {userInfo && userInfo.isAdmin && 
-            <Dropdown>
-            <Dropdown.Toggle variant="dark" bg='dark' id='adminmenu'>
-              {userInfo.name}
-            </Dropdown.Toggle>     
-            <Dropdown.Menu>
-              <Dropdown.Item href="/admin/userlist">Users</Dropdown.Item>
-              <Dropdown.Item href="/admin/productlist">Products</Dropdown.Item>
-              <Dropdown.Item href="/admin/orderlist">Orders</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>}
+
+              {userInfo && userInfo.isAdmin && (
+                <Dropdown>
+                  <Dropdown.Toggle variant='dark' bg='dark' id='adminmenu'>
+                    Admin features
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item href='/admin/userlist'>Users</Dropdown.Item>
+                    <Dropdown.Item href='/admin/productlist'>
+                      Products
+                    </Dropdown.Item>
+                    <Dropdown.Item href='/admin/orderlist'>
+                      Orders
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -68,8 +81,7 @@ const Navbar1 = (props) => {
 }
 export default Navbar1
 
-{
-  /* <Navbar bg='black' variant='dark' expand='lg' collapseOnSelect>
+/* <Navbar bg='black' variant='dark' expand='lg' collapseOnSelect>
         <Container>
           <LinkContainer to='/'>
             <Navbar.Brand>Proshop</Navbar.Brand>
@@ -98,4 +110,3 @@ export default Navbar1
           </Navbar.Collapse>
         </Container>
               </Navbar> */
-}

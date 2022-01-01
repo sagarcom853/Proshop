@@ -17,7 +17,7 @@ const RegisterScreen = ({ location, history }) => {
   const dispatch = useDispatch()
   const userRegister = useSelector((state) => state.userRegister)
   const { loading, error, userInfo } = userRegister
-  console.log(loading, error, userInfo, message)
+  // console.log(loading, error, userInfo, message)
   const redirect = location.search ? location.search.split('=')[1] : '/'
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const RegisterScreen = ({ location, history }) => {
 
   const submitHandler = (e) => {
     e.preventDefault()
-    console.log('submit Handler')
+    // console.log('submit Handler')
     let pattern = /^[A-z\s]+$/
     let sampleEmail = /^[A-z0-9]+.@[A-z]+.[A-z]+$/
     //Dispatch Register

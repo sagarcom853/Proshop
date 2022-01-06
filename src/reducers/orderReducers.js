@@ -19,7 +19,17 @@ import {
   ORDER_PAY_FAIL_Gpay,
   ORDER_LIST_MY_FAIL,
   ORDER_LIST_MY_SUCCESS,
-  ORDER_LIST_MY_REQUEST
+  ORDER_LIST_MY_REQUEST,
+  ORDER_LIST_REQUEST,
+  ORDER_LIST_FAIL,
+  ORDER_LIST_SUCCESS,
+  ORDER_LIST_RESET,
+  ORDER_DELIVER_REQUEST,
+  ORDER_DELIVER_SUCCESS,
+  ORDER_DELIVER_FAIL,
+  ORDER_DELIVER_RESET
+
+
 } from '../contants/orderConstants'
 
 export const orderCreateReducer = (state = {}, action) => {
@@ -36,7 +46,7 @@ export const orderCreateReducer = (state = {}, action) => {
 }
 
 export const orderDetailsReducer = (
-  state = { loading:true,orderItems: [], shippingAddress: {} },
+  state = { loading: true, orderItems: [], shippingAddress: {} },
   action
 ) => {
   switch (action.type) {
@@ -51,15 +61,12 @@ export const orderDetailsReducer = (
   }
 }
 
-export const orderPayReducer = (
-  state = {},
-  action
-) => {
+export const orderPayReducer = (state = {}, action) => {
   switch (action.type) {
     case ORDER_PAY_REQUEST:
       return { loading: true }
     case ORDER_PAY_SUCCESS:
-      return { loading: false,success:true}
+      return { loading: false, success: true }
     case ORDER_PAY_FAIL:
       return { loading: false, error: action.payload }
     case ORDER_PAY_RESET:
@@ -69,15 +76,12 @@ export const orderPayReducer = (
   }
 }
 
-export const orderPayReducerByCash = (
-  state = {},
-  action
-) => {
+export const orderPayReducerByCash = (state = {}, action) => {
   switch (action.type) {
     case ORDER_PAY_REQUEST_CASH:
-      return {loading: true }
+      return { loading: true }
     case ORDER_PAY_SUCCESS_CASH:
-      return { loading: false,success:true,}
+      return { loading: false, success: true }
     case ORDER_PAY_FAIL_CASH:
       return { loading: false, error: action.payload }
     case ORDER_PAY_RESET_CASH:
@@ -87,15 +91,12 @@ export const orderPayReducerByCash = (
   }
 }
 
-export const orderPayReducerByGpay = (
-  state = {},
-  action
-) => {
+export const orderPayReducerByGpay = (state = {}, action) => {
   switch (action.type) {
     case ORDER_PAY_REQUEST_Gpay:
-      return {loading: true }
+      return { loading: true }
     case ORDER_PAY_SUCCESS_Gpay:
-      return { loading: false,success:true,}
+      return { loading: false, success: true }
     case ORDER_PAY_FAIL_Gpay:
       return { loading: false, error: action.payload }
     case ORDER_PAY_RESET_Gpay:
@@ -105,18 +106,43 @@ export const orderPayReducerByGpay = (
   }
 }
 
-export const orderListMyReducer = (
-  state = {},
-  action
-) => {
+export const orderListMyReducer = (state = {}, action) => {
   switch (action.type) {
     case ORDER_LIST_MY_REQUEST:
-      return {loading: true }
+      return { loading: true }
     case ORDER_LIST_MY_SUCCESS:
-      return { loading: false,orders:action.payload}
+      return { loading: false, orders: action.payload }
     case ORDER_LIST_MY_FAIL:
       return { loading: false, error: action.payload }
-   
+
+    default:
+      return state
+  }
+}
+
+export const orderListReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ORDER_LIST_REQUEST:
+      return { loading: true }
+    case ORDER_LIST_SUCCESS:
+      return { loading: false, orders: action.payload }
+    case ORDER_LIST_FAIL:
+      return { loading: false, error: action.payload }
+
+    default:
+      return state
+  }
+}
+export const orderDeliverReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ORDER_DELIVER_REQUEST:
+      return { loading: true }
+    case ORDER_DELIVER_SUCCESS:
+      return { loading: false, success: true }
+    case ORDER_DELIVER_FAIL:
+      return { loading: false, error: action.payload }
+    case ORDER_DELIVER_RESET:
+      return {}
     default:
       return state
   }

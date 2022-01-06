@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   getOrderDetails,
   // payOrder,
+  deliverOrder,
   payOrderByCash,
   payOrderByGpay,
 } from '../actions/orderAction'
@@ -15,7 +16,7 @@ import Message from '../components/Message'
 import Loader from '../components/Loader'
 import {
   ORDER_PAY_RESET,
-  // ORDER_DELIVER_RESET,
+  ORDER_DELIVER_RESET,
   ORDER_PAY_RESET_CASH,
 } from '../contants/orderConstants'
 import GooglePayButton from '@google-pay/button-react'
@@ -31,6 +32,9 @@ const OrderScreen = ({ match, history }) => {
 
   const orderPay = useSelector((state) => state.orderPay)
   const { loading: loadingPay, success: successPay } = orderPay
+
+  const orderDeliver = useSelector((state) => state.orderDeliver)
+  const { loading: loadingDeliver, success: successDeliver } = orderDeliver
   // console.log(loadingPay, successPay)
 
   // const orderPayByCash = useSelector((state) => state.orderPayByCash)
@@ -48,6 +52,9 @@ const OrderScreen = ({ match, history }) => {
   // const { loading: loadingDeliver, success: successDeliver } = orderDeliver
 
   useEffect(() => {
+    if (!userInfo) {
+      history.push('/login')
+    }
     // const addPayPalScript = async () => {
     //   const { data: clientId } = await axios.get('/api/config/paypal')
     //   const script = document.createElement('script')
@@ -76,10 +83,10 @@ const OrderScreen = ({ match, history }) => {
       document.body.appendChild(script)
     }
 
-    if (!order || successPay || order._id !== orderId) {
+    if (!order || successPay || successDeliver || order._id !== orderId) {
+      dispatch({ type: ORDER_DELIVER_RESET })
       dispatch({ type: ORDER_PAY_RESET })
       dispatch({ type: ORDER_PAY_RESET_CASH })
-      // dispatch({ type: ORDER_DELIVER_RESET })
       dispatch(getOrderDetails(orderId))
     } else if (!order.isPaid) {
       if (!window.google) {
@@ -89,7 +96,7 @@ const OrderScreen = ({ match, history }) => {
         setSdkReady(false)
       }
     }
-  }, [dispatch, orderId, order, successPay])
+  }, [dispatch, orderId, order, successPay, history, userInfo, successDeliver])
 
   if (!loading) {
     order.itemsPrice = order.orderItems.reduce(
@@ -112,6 +119,10 @@ const OrderScreen = ({ match, history }) => {
     // console.log(paymentResult)
     dispatch(payOrderByGpay(orderId, paymentResult))
   }
+
+  const deliverSuccessHandler = () => {
+    dispatch(deliverOrder(order))
+  }
   const handleCashRequest = () => {
     // console.log('order', order)
 
@@ -132,6 +143,7 @@ const OrderScreen = ({ match, history }) => {
     // console.log(paymentResult)
     dispatch(payOrderByCash(orderId, paymentResult))
   }
+
   return loading ? (
     <Loader />
   ) : error ? (
@@ -152,11 +164,13 @@ const OrderScreen = ({ match, history }) => {
                     </h3>
                     <p>
                       {' '}
-                      <strong>Name:</strong> {userInfo.name}
+                      <strong>Name:</strong> {order.user.name}
                     </p>
                     <p>
                       <strong>Email Id:</strong>{' '}
-                      <a href={`mailto:${userInfo.email}`}>{userInfo.email} </a>
+                      <a href={`mailto:${order.user.email}`}>
+                        {order.user.email}{' '}
+                      </a>
                     </p>
                     <p>
                       <strong>Address: </strong>
@@ -167,7 +181,7 @@ const OrderScreen = ({ match, history }) => {
                     </p>
                     {order.isDelivered ? (
                       <Message variant='success'>
-                        Paid on {order.deliveredAt}
+                        Delivered on {order.deliveredAt}
                       </Message>
                     ) : (
                       <Message variant='danger'>Not Delivered</Message>
@@ -367,7 +381,6 @@ const OrderScreen = ({ match, history }) => {
                             buttonColor='black'
                             buttonType='pay'
                             buttonSizeMode='static'
-
                           />
                         </ListGroup.Item>
                       </span>
@@ -379,6 +392,24 @@ const OrderScreen = ({ match, history }) => {
                   {error && <Message variant='danger'>{error}</Message>}
                 </ListGroup.Item>
               </ListGroup>
+
+              {loadingDeliver && <Loader />}
+              {userInfo &&
+                userInfo.isAdmin &&
+                order.isPaid &&
+                !order.isDelivered && (
+                  <ListGroup>
+                    <ListGroup.Item>
+                      <Button
+                        type='button'
+                        className='btn btn-block'
+                        onClick={deliverSuccessHandler}
+                      >
+                        Mark as Delivered
+                      </Button>
+                    </ListGroup.Item>
+                  </ListGroup>
+                )}
             </Card>
           </Col>
         </Row>

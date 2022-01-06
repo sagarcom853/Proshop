@@ -15,6 +15,9 @@ import PlaceOrderScreen from './Screens/PlaceOrderScreen'
 import OrderScreen from './Screens/OrderScreen'
 import UserlistScreen from './Screens/userListScreen'
 import UserEditScreen from './Screens/userEditScreen'
+import ProductListScreen from './Screens/ProductListScreen'
+import ProductEditScreen from './Screens/ProductEditScreen'
+import OrderListScreen from './Screens/OrderListScreen'
 import NotLoggedScreen from './Screens/NotLoggedScreen'
 import { Container } from 'react-bootstrap'
 
@@ -37,6 +40,9 @@ class App extends React.Component {
             <Route path='/cart/:id?' component={CartScreen} />
             <Route path='/admin/userlist/' component={UserlistScreen} />
             <Route path='/admin/user/:id/edit' component={UserEditScreen} />
+            <Route path='/admin/productlist/' component={ProductListScreen} />
+            <Route path='/admin/orderlist/' component={OrderListScreen} />
+            <Route path='/admin/product/:id/edit' component={ProductEditScreen} />
             <Route exact path='/' component={HomeScreen} />
           </Container>
 

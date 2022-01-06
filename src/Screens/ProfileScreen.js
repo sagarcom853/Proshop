@@ -155,7 +155,7 @@ const ProfileScreen = ({ history }) => {
                       </td>
                       <td>
                         {order.isDelivered ? (
-                          order.DeliveredAt
+                          order.deliveredAt
                         ) : (
                           <i
                             className='fas fa-times'
